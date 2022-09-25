@@ -1,6 +1,9 @@
-"use jj to go into normal mode, in the console and in insertmode
-inoremap jj <Esc>
-tnoremap jj <C-w>N
+"Use jj to go into normal mode, in the console and in insertmode
+inoremap kj <Esc>
+tnoremap kj <C-w>N
+
+"Don't get lazy!
+noremap <Esc> nop
 
 "Formating
 set tabstop=2
@@ -18,6 +21,7 @@ nnoremap : gt
 
 "Use space to enter commands
 nnoremap <space> :
+xnoremap <space> :
 
 "Recenter the camera after finding next occurance with /
 nnoremap n nzz
@@ -72,14 +76,6 @@ set ignorecase
 set smartcase
 set incsearch
 
-"Replace f with sneak, treat sneak as an quick, instant
-"gesture, if i want more i will use /
-map f <Plug>Sneak_s
-map F <Plug>Sneak_S
-"map s <Plug>SneakNext
-"map S <Plug>SneakPrevious
-highlight link Sneak none
-let g:sneak#use_ic_scs = 1
 
 "Nice tabses titles
 function! Tabline() abort
@@ -144,3 +140,55 @@ noremap T :ls<CR>
 noremap t :b<Space>
 noremap R :buffer delete<Space>
 noremap r :buffer add<Space>
+
+"Use Ctrl+space to exit command mode instead of reaching for esc (or ctrl-c)
+cmap <C-space> <C-c>
+
+
+"Statusline
+set statusline=
+set statusline +=\ %n\            "buffer number
+"set statusline +=%5*%{&ff}%*            "file format
+"set statusline +=%3*%y%*                "file type
+"set statusline +=%4*\ %<%F%*            "full path
+"set statusline +=%1*%=%5l%*             "current line
+"set statusline +=%2*/%L%*               "total lines
+"set statusline +=%1*%4v\ %*             "virtual column number
+"set statusline +=%2*0x%04B\ %*          "character under cursor
+set statusline+=\ \ %t\ %m%*\ \%F\ \ \ \%=\%{strftime('%a\ %b\ %d\ %Y')}\ \ \ \%{strftime('%H:%M')}\ \ 
+"Show statusline even if there's only one split
+set laststatus=2
+
+"--------Only external plugins below this line
+
+"Replace f with sneak, treat sneak as an quick, instant
+"gesture, if i want more i will use /
+map f <Plug>Sneak_s
+map F <Plug>Sneak_S
+"map s <Plug>SneakNext
+"map S <Plug>SneakPrevious
+highlight link Sneak none
+let g:sneak#use_ic_scs = 1
+
+"Vundle
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'kien/ctrlp.vim'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'octol/vim-cpp-enhanced-highlight'
+"Plugin 'vim-airline/vim-airline'
+"Plugin 'valloric/youcompleteme'
+"Plugin 'enricobacis/vim-airline-clock'
+
+call vundle#end()            " required
+filetype plugin indent on    " required
+
