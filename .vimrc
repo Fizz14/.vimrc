@@ -1,9 +1,21 @@
-"Use jj to go into normal mode, in the console and in insertmode
+"Use kj to go into normal mode, in the console and in insertmode
 inoremap kj <Esc>
 tnoremap kj <C-w>N
+xnoremap kj <Esc>
+cnoremap kj <Esc>
 
-"Don't get lazy!
-noremap <Esc> nop
+"Don't get sloppy!
+inoremap <Esc> <Nop>
+cnoremap <Esc> <Nop>
+cnoremap <Esc> <Nop>
+
+noremap J 7gj
+noremap K 7gk
+noremap j gj
+noremap k gk
+
+noremap <C-j> ]'
+noremap <C-k> ['
 
 "Formating
 set tabstop=2
@@ -15,6 +27,26 @@ set autoindent
 nnoremap <C-t> :tab split<CR>
 inoremap <C-t> <Esc>:tab split<CR>
 
+nnoremap <C-i> I<Esc>
+nnoremap <C-a> A<Esc>
+
+"Easier vertical movemnt
+noremap D 12<C-e>
+noremap U 12<C-y>
+
+"Easy commenting/uncommenting
+xnoremap I <c-v>$o0I
+
+"Consistent searching
+nnoremap <expr> n 'Nn'[v:searchforward]
+nnoremap <expr> N 'nN'[v:searchforward]
+
+"resizing is abit faster
+noremap s+ :resize +5<CR>
+noremap s- :resize -5<CR>
+noremap s< :vertical:resize -5<CR>
+noremap s> :vertical:resize +5<CR>
+
 "Use L and : to change tabs
 nnoremap L gT
 nnoremap : gt
@@ -24,15 +56,20 @@ nnoremap <space> :
 xnoremap <space> :
 
 "Recenter the camera after finding next occurance with /
-nnoremap n nzz
-nnoremap N Nzz
+"nnoremap n nzz
+"nnoremap N Nzz
 "nnoremap Y y$
 
 noremap l h
 noremap ; l
 set backspace=indent,eol,start
 noremap h /
+noremap <C-h> :set invhlsearch<CR>
+noremap H ?
 set timeoutlen=300
+
+"Print date
+"noremap DD :r! date "+\%a \%d \%b \%Y"<CR>kdd
 
 "Treat jkl; as hjkl
 tnoremap <C-w>l <C-w>h
@@ -40,17 +77,26 @@ tnoremap <C-w>; <C-w>l
 tnoremap <C-w>L <C-w>H
 tnoremap <C-w>: <C-w>L
 
+tnoremap sl <C-w>h
+tnoremap s; <C-w>l
+tnoremap sj <C-w>j
+tnoremap sk <C-w>k
+tnoremap sv <C-w>v
+tnoremap ss <C-w>s
+tnoremap kj <C-w>N
+
 nnoremap <C-w>l <C-w>h
 nnoremap <C-w>; <C-w>l
 nnoremap <C-w>L <C-w>H
 nnoremap <C-w>: <C-w>L
 
 "Open a terminal with Ctrl+space, open a browser with ctrl+k
-nnoremap <C-@> :bo term<CR>
-nnoremap <C-k> :E<CR>
+nnoremap <C-@> :term<CR>
+nnoremap <C-L> :E<CR>
+set splitbelow
 
 "Shift+k is go to context in a new tab
-nnoremap K <C-w><C-]><C-w>T
+nnoremap <C-l> <C-w><C-]><C-w>T
 
 "Move tabs with Alt+arrowkey
 noremap <A-Left>  :-tabmove<cr>
@@ -59,6 +105,13 @@ noremap <A-Right> :+tabmove<cr>
 "Hidden folds for {}
 set foldmethod=syntax
 set foldlevel=99
+
+"Ghetto fuzzyfinder
+"nnoremap <c-P> :vs **/*
+"set wildmenu
+"set wildignore+=*.bmp,*.gif,*.ico,*.jpg,*.png,*.ico*.pdf,*.psd,*.xcf,*.wav,*.ogg
+"set wildignore+=node_modules
+"set autochdir
 
 "Preferences
 set scrolloff=10
@@ -75,6 +128,7 @@ set number
 set ignorecase
 set smartcase
 set incsearch
+set hlsearch
 
 
 "Nice tabses titles
@@ -124,11 +178,13 @@ augroup netrw_mapping
 augroup END
 
 function! NetrwMapping() abort
-  noremap <buffer> s <C-w>
-  noremap <buffer> T :ls<CR>
-  noremap <buffer> t :b<Space>
-  noremap <buffer> R :buffer delete<Spa
-  noremap <buffer> r :buffer add<Space>
+  "noremap <buffer> s <C-w>
+  "noremap <buffer> T :ls<CR>
+  "noremap <buffer> t :b<Space>
+   noremap <buffer> t :ls<CR>:b<Space>
+   noremap <buffer> T :CtrlPBuffer<CR>
+   noremap <buffer> R :ls<CR>:bdelete<Space>
+   noremap <buffer> r :ls<CR>:badd<Space>
 endfunction
 
 "Paste won't write to the register
@@ -136,14 +192,20 @@ xnoremap <expr> p 'pgv"'.v:register.'y`>'
 xnoremap <expr> P 'Pgv"'.v:register.'y`>'
 
 "Easy buffers
-noremap T :ls<CR>
-noremap t :b<Space>
-noremap R :buffer delete<Space>
-noremap r :buffer add<Space>
+"
+"noremap T :ls<CR>
+noremap t :ls<CR>:b<Space>
+noremap T :CtrlPBuffer<CR>
+"noremap T :CtrlPMRU<CR>
+noremap R :ls<CR>:bdelete<Space>
+noremap r :ls<CR>:badd<Space>
+
+"Use ctrl k/j for text completion
+inoremap <C-j> <C-n>
+inoremap <C-k> <C-p>
 
 "Use Ctrl+space to exit command mode instead of reaching for esc (or ctrl-c)
 cmap <C-space> <C-c>
-
 
 "Statusline
 set statusline=
@@ -155,40 +217,93 @@ set statusline +=\ %n\            "buffer number
 "set statusline +=%2*/%L%*               "total lines
 "set statusline +=%1*%4v\ %*             "virtual column number
 "set statusline +=%2*0x%04B\ %*          "character under cursor
-set statusline+=\ \ %t\ %m%*\ \%F\ \ \ \%=\%{strftime('%a\ %b\ %d\ %Y')}\ \ \ \%{strftime('%H:%M')}\ \ 
+set statusline+=\ \ %t\ %m%*\ \%F\ \ \ \%P\ \%=\%{strftime('%a\ %b\ %d\ %Y')}\ \ \ \%{strftime('%H:%M')}\ \ 
 "Show statusline even if there's only one split
 set laststatus=2
+
+"This could be better
+cnoremap hhh echo $MYVIMRC
+cnoremap ggg source $(MYVIMRC)
+
+let g:ctrlp_prompt_mappings = {
+     \ 'PrtBS()':              ['<bs>', '<c-]>'],
+     \ 'PrtDelete()':          ['<del>'],
+     \ 'PrtDeleteWord()':      ['<c-w>'],
+     \ 'PrtClear()':           ['<c-u>'],
+     \ 'PrtSelectMove("j")':   ['<c-j>', '<down>'],
+     \ 'PrtSelectMove("k")':   ['<c-k>', '<up>'],
+     \ 'PrtSelectMove("t")':   ['<Home>', '<kHome>'],
+     \ 'PrtSelectMove("b")':   ['<End>', '<kEnd>'],
+     \ 'PrtSelectMove("u")':   ['<PageUp>', '<kPageUp>'],
+     \ 'PrtSelectMove("d")':   ['<PageDown>', '<kPageDown>'],
+     \ 'PrtHistory(-1)':       ['<c-n>'],
+     \ 'PrtHistory(1)':        ['<c-p>'],
+     \ 'AcceptSelection("e")': ['<cr>', '<2-LeftMouse>'],
+     \ 'AcceptSelection("h")': ['<c-x>', '<c-cr>', '<c-s>'],
+     \ 'AcceptSelection("t")': ['<c-t>'],
+     \ 'AcceptSelection("v")': ['<c-v>', '<RightMouse>'],
+     \ 'ToggleFocus()':        ['<s-tab>'],
+     \ 'ToggleRegex()':        ['<c-r>'],
+     \ 'ToggleByFname()':      ['<c-d>'],
+     \ 'ToggleType(1)':        ['<c-f>', '<c-up>'],
+     \ 'ToggleType(-1)':       ['<c-b>', '<c-down>'],
+     \ 'PrtExpandDir()':       ['<tab>'],
+     \ 'PrtInsert("c")':       ['<MiddleMouse>', '<insert>'],
+     \ 'PrtInsert()':          ['<c-\>'],
+     \ 'PrtCurStart()':        ['<c-a>'],
+     \ 'PrtCurEnd()':          ['<c-e>'],
+     \ 'PrtCurLeft()':         ['<c-h>', '<left>', '<c-^>'],
+     \ 'PrtCurRight()':        ['<c-l>', '<right>'],
+     \ 'PrtClearCache()':      ['<F5>'],
+     \ 'PrtDeleteEnt()':       ['<F7>'],
+     \ 'CreateNewFile()':      ['<c-y>'],
+     \ 'MarkToOpen()':         ['<c-z>'],
+     \ 'OpenMulti()':          ['<c-o>'],
+     \ 'PrtExit()':            ['<esc>', '<c-c>', '<c-b>', 'kj'],
+     \ }
 
 "--------Only external plugins below this line
 
 "Replace f with sneak, treat sneak as an quick, instant
-"gesture, if i want more i will use /
-map f <Plug>Sneak_s
-map F <Plug>Sneak_S
+"gesture, so it's different from /
+"map f <Plug>Sneak_s
+"map F <Plug>Sneak_S
 "map s <Plug>SneakNext
 "map S <Plug>SneakPrevious
-highlight link Sneak none
-let g:sneak#use_ic_scs = 1
+"highlight link Sneak none
+"let g:sneak#use_ic_scs = 1
 
-"Vundle
-set nocompatible              " be iMproved, required
-filetype off                  " required
+"What about a ghetto vimsneak?
+function! SneakDown()
+   let a = nr2char(getchar())
+   let b = nr2char(getchar())
+   if (a!='k'&&b!='j')
+     execute "normal /" . a . b . "\<CR>"
+     let @/= a.b
+   endif
+endfunction
 
-" set the runtime path to include Vundle and initialize
+function! SneakUp()
+   let a = nr2char(getchar())
+   let b = nr2char(getchar())
+   if (a!='k'&&b!='j')
+     execute "normal ?" . a . b . "\<CR>"
+     let @/= a.b
+   endif
+endfunction
+
+nnoremap f :call SneakDown()<CR>
+nnoremap F :call SneakUp()<CR>
+
+set nocompatible
+filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
 
-" let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'kien/ctrlp.vim'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'octol/vim-cpp-enhanced-highlight'
-"Plugin 'vim-airline/vim-airline'
-"Plugin 'valloric/youcompleteme'
-"Plugin 'enricobacis/vim-airline-clock'
 
-call vundle#end()            " required
-filetype plugin indent on    " required
+"Plugin 'tpope/vim-fugitive'
 
+call vundle#end()
+filetype plugin indent on
