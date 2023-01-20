@@ -1,16 +1,17 @@
-"Use kj to go into normal mode, in the console and in insertmode
+""Use kj to go into normal mode, in the console and in insertmode
 inoremap kj <Esc>
 tnoremap kj <C-w>N
 xnoremap kj <Esc>
 cnoremap kj <Esc>
 
-"Don't get sloppy!
+"Don't use Esc
 inoremap <Esc> <Nop>
 cnoremap <Esc> <Nop>
 cnoremap <Esc> <Nop>
 
 noremap J 7gj
 noremap K 7gk
+
 noremap j gj
 noremap k gk
 
@@ -31,8 +32,8 @@ nnoremap <C-i> I<Esc>
 nnoremap <C-a> A<Esc>
 
 "Easier vertical movemnt
-noremap D 12<C-e>
-noremap U 12<C-y>
+"nnoremap J 24<C-e>
+"nnoremap K 24<C-y>
 
 "Easy commenting/uncommenting
 xnoremap I <c-v>$o0I
@@ -46,6 +47,9 @@ noremap s+ :resize +5<CR>
 noremap s- :resize -5<CR>
 noremap s< :vertical:resize -5<CR>
 noremap s> :vertical:resize +5<CR>
+
+nnoremap sd :resize +10<CR>
+nnoremap sf :vertical:resize +10<CR>
 
 "Use L and : to change tabs
 nnoremap L gT
@@ -63,9 +67,15 @@ xnoremap <space> :
 noremap l h
 noremap ; l
 set backspace=indent,eol,start
-noremap h /
-noremap <C-h> :set invhlsearch<CR>
-noremap H ?
+nnoremap df /
+nnoremap DF ?
+nnoremap h :set invhlsearch<CR>
+"noremap H ?
+
+"x to toggle wordwrap
+"noremap x :set wrap!<CR>
+"noremap c :set number!<CR>
+
 set timeoutlen=300
 
 "Print date
@@ -83,6 +93,8 @@ tnoremap sj <C-w>j
 tnoremap sk <C-w>k
 tnoremap sv <C-w>v
 tnoremap ss <C-w>s
+tnoremap sd <C-w>s
+tnoremap sf <C-w>N
 tnoremap kj <C-w>N
 
 nnoremap <C-w>l <C-w>h
@@ -102,9 +114,11 @@ nnoremap <C-l> <C-w><C-]><C-w>T
 noremap <A-Left>  :-tabmove<cr>
 noremap <A-Right> :+tabmove<cr>
 
-"Hidden folds for {}
-set foldmethod=syntax
-set foldlevel=99
+""Hidden folds for {}
+"disabled because it slowens vim with large files
+"set foldmethod=syntax
+"set foldlevel=99
+noremap zf zf%
 
 "Ghetto fuzzyfinder
 "nnoremap <c-P> :vs **/*
@@ -161,15 +175,15 @@ endfunction
 set tabline=%!Tabline()
 
 "Use s instead of <C-w> to go into splitmode
-noremap s <C-w>
-noremap sj <C-w>j
-noremap sk <C-w>k
-noremap s; <C-w>l
-noremap sl <C-w>h
-noremap sJ <C-w>J
-noremap sK <C-w>K
-noremap s: <C-w>L
-noremap sL <C-w>H
+nnoremap s <C-w>
+nnoremap sj <C-w>j
+nnoremap sk <C-w>k
+nnoremap s; <C-w>l
+nnoremap sl <C-w>h
+nnoremap sJ <C-w>J
+nnoremap sK <C-w>K
+nnoremap s: <C-w>L
+nnoremap sL <C-w>H
 
 "Get s to work in netrw (finally)
 augroup netrw_mapping
@@ -194,15 +208,14 @@ xnoremap <expr> P 'Pgv"'.v:register.'y`>'
 "Easy buffers
 "
 "noremap T :ls<CR>
-noremap t :ls<CR>:b<Space>
-noremap T :CtrlPBuffer<CR>
+nnoremap t :ls<CR>:b<Space>
+nnoremap T :CtrlPBuffer<CR>
 "noremap T :CtrlPMRU<CR>
-noremap R :ls<CR>:bdelete<Space>
-noremap r :ls<CR>:badd<Space>
+nnoremap R :ls<CR>:bdelete<Space>
+nnoremap r :ls<CR>:badd<Space>
 
-"Use ctrl k/j for text completion
-inoremap <C-j> <C-n>
-inoremap <C-k> <C-p>
+nnoremap aj ]`
+nnoremap ak [`
 
 "Use Ctrl+space to exit command mode instead of reaching for esc (or ctrl-c)
 cmap <C-space> <C-c>
@@ -222,8 +235,8 @@ set statusline+=\ \ %t\ %m%*\ \%F\ \ \ \%P\ \%=\%{strftime('%a\ %b\ %d\ %Y')}\ \
 set laststatus=2
 
 "This could be better
-cnoremap hhh echo $MYVIMRC
-cnoremap ggg source $(MYVIMRC)
+"cnoremap hhh echo $MYVIMRC
+"cnoremap ggg source $(MYVIMRC)
 
 let g:ctrlp_prompt_mappings = {
      \ 'PrtBS()':              ['<bs>', '<c-]>'],
@@ -273,27 +286,49 @@ let g:ctrlp_prompt_mappings = {
 "highlight link Sneak none
 "let g:sneak#use_ic_scs = 1
 
+function! Sneak1Down()
+   let a = nr2char(getchar())
+   execute "normal /" . a . "\<CR>"
+   let @/= a
+endfunction
+
+function! Sneak1Up()
+   let a = nr2char(getchar())
+   execute "normal ?" . a . "\<CR>"
+   let @/= a
+endfunction
+
 "What about a ghetto vimsneak?
-function! SneakDown()
+function! Sneak2Down()
    let a = nr2char(getchar())
    let b = nr2char(getchar())
-   if (a!='k'&&b!='j')
+   if (a!='k'||b!='j')
      execute "normal /" . a . b . "\<CR>"
      let @/= a.b
    endif
 endfunction
 
-function! SneakUp()
+function! Sneak2Up()
    let a = nr2char(getchar())
    let b = nr2char(getchar())
-   if (a!='k'&&b!='j')
+   if (a!='k'||b!='j')
      execute "normal ?" . a . b . "\<CR>"
      let @/= a.b
    endif
 endfunction
 
-nnoremap f :call SneakDown()<CR>
-nnoremap F :call SneakUp()<CR>
+nnoremap f :call Sneak1Down()<CR>
+nnoremap F :call Sneak1Up()<CR>
+
+"nnoremap d :set hlsearch<CR> <bar> :call Sneak2Down()<CR>
+"nnoremap D :set hlsearch<CR> <bar> :call Sneak2Up()<CR>
+
+nnoremap d :call Sneak2Down()<CR>
+nnoremap D :call Sneak2Up()<CR>
+
+noremap r d
+noremap rr dd
+noremap R D
 
 set nocompatible
 filetype off
