@@ -1,3 +1,5 @@
+syntax on
+
 ""Use kj to go into normal mode, in the console and in insertmode
 inoremap kj <Esc>
 tnoremap kj <C-w>N
@@ -17,6 +19,17 @@ noremap k gk
 
 noremap <C-j> ]'
 noremap <C-k> ['
+
+"Use g for directory searching
+noremap gg gg
+function! GlobalSearch()
+  let st = input('Enter string for global search:')
+  execute ":vimgrep /".st."/ **/*.cpp\<CR>"
+  execute ":copen"
+endfunction
+
+//noremap g :vimgrep /input('Enter search term: ')./ **/*.cpp<left><left><left><left><left><left><left><left><left><left><CR>:cw<CR>
+noremap g :call GlobalSearch()<CR>
 
 "Formating
 set tabstop=2
@@ -120,7 +133,7 @@ noremap <A-Right> :+tabmove<cr>
 "set foldlevel=99
 noremap zf zf%
 
-"Ghetto fuzzyfinder
+"Crafty fuzzyfinder
 "nnoremap <c-P> :vs **/*
 "set wildmenu
 "set wildignore+=*.bmp,*.gif,*.ico,*.jpg,*.png,*.ico*.pdf,*.psd,*.xcf,*.wav,*.ogg
@@ -145,7 +158,7 @@ set incsearch
 set hlsearch
 
 
-"Nice tabses titles
+"Nice tab titles
 function! Tabline() abort
     let l:line = ''
     let l:current = tabpagenr()
@@ -214,6 +227,7 @@ nnoremap T :CtrlPBuffer<CR>
 nnoremap R :ls<CR>:bdelete<Space>
 nnoremap r :ls<CR>:badd<Space>
 
+"What does this do? I forget
 nnoremap aj ]`
 nnoremap ak [`
 
@@ -237,6 +251,8 @@ set laststatus=2
 "This could be better
 "cnoremap hhh echo $MYVIMRC
 "cnoremap ggg source $(MYVIMRC)
+
+let g:ctrlp_switch_buffer = 0
 
 let g:ctrlp_prompt_mappings = {
      \ 'PrtBS()':              ['<bs>', '<c-]>'],
@@ -298,7 +314,7 @@ function! Sneak1Up()
    let @/= a
 endfunction
 
-"What about a ghetto vimsneak?
+"What about a crafty vimsneak?
 function! Sneak2Down()
    let a = nr2char(getchar())
    let b = nr2char(getchar())
