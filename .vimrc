@@ -24,12 +24,12 @@ noremap <C-k> ['
 noremap gg gg
 function! GlobalSearch()
   let st = input('Enter string for global search:')
-  execute ":vimgrep /".st."/ **/*.cpp\<CR>"
+  execute ":vimgrep /".st."/ **/*.*\<CR>"
+  "execute ":vimgrep /".st."/ **/*.cpp\<CR>"
   execute ":copen"
 endfunction
 
-//noremap g :vimgrep /input('Enter search term: ')./ **/*.cpp<left><left><left><left><left><left><left><left><left><left><CR>:cw<CR>
-noremap g :call GlobalSearch()<CR>
+"noremap g :call GlobalSearch()<CR>
 
 "Formating
 set tabstop=2
@@ -38,8 +38,8 @@ set expandtab
 set autoindent
 
 "Ctrl+T will duplicate the current tab, in either mode
-nnoremap <C-t> :tab split<CR>
-inoremap <C-t> <Esc>:tab split<CR>
+//nnoremap <C-t> :tab split<CR>
+//inoremap <C-t> <Esc>:tab split<CR>
 
 nnoremap <C-i> I<Esc>
 nnoremap <C-a> A<Esc>
@@ -335,16 +335,31 @@ endfunction
 
 nnoremap f :call Sneak1Down()<CR>
 nnoremap F :call Sneak1Up()<CR>
+xnoremap f :call Sneak1Down()<CR>
+xnoremap F :call Sneak1Up()<CR>
 
 "nnoremap d :set hlsearch<CR> <bar> :call Sneak2Down()<CR>
 "nnoremap D :set hlsearch<CR> <bar> :call Sneak2Up()<CR>
 
 nnoremap d :call Sneak2Down()<CR>
 nnoremap D :call Sneak2Up()<CR>
+xnoremap d :call Sneak2Down()<CR>
+xnoremap D :call Sneak2Up()<CR>
 
 noremap r d
 noremap rr dd
 noremap R D
+
+fun! ShowFuncName()
+  let lnum = line(".")
+  let col = col(".")
+  echohl ModeMsg
+  echo getline(search("^[^ \t#/]\\{2}.*[^:]\s*$", 'bW'))
+  echohl None
+  call search("\\%" . lnum . "l" . "\\%" . col . "c")
+endfun
+
+nnoremap M :call ShowFuncName()<CR>
 
 set nocompatible
 filetype off
